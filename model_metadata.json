@@ -1,0 +1,50 @@
+{
+  "version": "v3_heading",
+  "input_format": "build_features(speed_window, heading_window) з feature_utils.py, де обидва вікна — останні 5 значень (км/год і градуси азимута)",
+  "input_shape": [
+    1,
+    20
+  ],
+  "feature_names": [
+    "v1",
+    "v2",
+    "v3",
+    "v4",
+    "v5",
+    "d1",
+    "d2",
+    "d3",
+    "d4",
+    "mean_v",
+    "std_v",
+    "trend_slope",
+    "turn1",
+    "turn2",
+    "turn3",
+    "turn4",
+    "mean_abs_turn",
+    "max_abs_turn",
+    "cum_turn",
+    "last_turn"
+  ],
+  "output_format": "дельта швидкості (км/год) на наступному кроці (крок = 15 сек); абсолютна швидкість = остання відома швидкість + delta",
+  "usage_example": "from feature_utils import build_features; delta = model.predict([build_features([50,48,42,30,18], [90,95,110,140,170])])[0]; predicted_speed = 18 + delta",
+  "required_libs": [
+    "scikit-learn",
+    "joblib",
+    "numpy"
+  ],
+  "model_type": "HistGradientBoostingRegressor (tuned, delta target, heading features)",
+  "best_params": {
+    "l2_regularization": 0.2184404372168336,
+    "learning_rate": 0.13662278540370254,
+    "max_iter": 227,
+    "max_leaf_nodes": 106,
+    "min_samples_leaf": 98
+  },
+  "val_mae_kmh": 10.26,
+  "val_rmse_kmh": 13.93,
+  "val_r2": 0.763,
+  "trained_on_rows": 4164151,
+  "notes": "Модель прогнозує на 15 сек вперед (SAMPLE_INTERVAL_SEC у тренуванні). Якщо сервер оновлює позицію щосекунди — інтерполюй лінійно між поточною і прогнозованою швидкістю на 15 кроків, а не викликай модель щосекунди."
+}
